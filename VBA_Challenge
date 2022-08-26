@@ -1,0 +1,206 @@
+
+
+Sub AllStocksAnalysis()
+
+
+    'Declarations
+    Dim startTime As Single
+    Dim endTime  As Single
+    Dim yearValue As String
+    
+    'Activate the worksheet and clear the worksheet
+    Worksheets("All Stocks Analysis").Activate
+    'Call ClearWorksheet
+    
+  
+    'Input the year to analyse the stock
+    yearValue = InputBox("What year would you like to run the analysis on?")
+  
+    'Evaluate the yearvalue to avoid errors
+    If ((yearValue = "2017" Or yearValue = "2018")) Then
+    
+    
+            'Start the timer for performance measure.
+            startTime = Timer
+            
+            'Create a header row
+                       
+            Range("A1").Value = "All Stocks Analysis" + "  " + (yearValue)
+            Cells(3, 1).Value = "Stock Name"
+            Cells(3, 2).Value = "Year"
+            Cells(3, 3).Value = "Total Volume"
+            Cells(3, 4).Value = "Return"
+            
+            'Create a ticker array
+            Dim tickers(11) As String
+            
+            tickers(0) = "AY"
+            tickers(1) = "CSIQ"
+            tickers(2) = "DQ"
+            tickers(3) = "ENPH"
+            tickers(4) = "FSLR"
+            tickers(5) = "HASI"
+            tickers(6) = "JKS"
+            tickers(7) = "RUN"
+            tickers(8) = "SEDG"
+            tickers(9) = "SPWR"
+            tickers(10) = "TERP"
+            tickers(11) = "VSLR"
+            
+            
+            
+             'start analysis
+              
+            Dim rowStart As Long
+            Dim rowEnd As Long
+            Dim tickerVolumes(11) As Double
+            Dim tickerStartingPrices(11) As Double
+            Dim tickerEndingPrices(11) As Double
+          
+            rowStart = 2
+            
+            'Activate the year sheet to get the analyse.
+            Worksheets(yearValue).Activate
+            
+            rowEnd = Cells(Rows.Count, "A").End(xlUp).Row
+            totalVolume = 0
+            
+            'iterate through the year worksheet to calculate the total volume for ticker
+            For tickerIndex = 0 To 11
+            
+                ticker = tickers(tickerIndex)
+                totalVolume = 0
+                Worksheets(yearValue).Activate
+               
+             For i = rowStart To rowEnd
+                
+                'calculate total Volume for each ticker
+                If Cells(i, 1).Value = ticker Then
+                
+                    tickerVolumes(tickerIndex) = tickerVolumes(tickerIndex) + Cells(i, 8).Value
+                
+                End If
+                
+              
+                'caluculate the Starting Price for each ticker
+                If (Cells(i, 1).Value = tickers(tickerIndex)) Then
+                    If (Cells(i - 1, 1).Value <> tickers(tickerIndex)) Then
+                    
+                        tickerStartingPrices(tickerIndex) = Cells(i, 6).Value
+                    
+                    End If
+                End If
+                
+                'Calculate the Final Price for each ticker
+                If (Cells(i, 1).Value = tickers(tickerIndex)) Then
+                    If (Cells(i + 1, 1).Value <> tickers(tickerIndex)) Then
+                    
+                        tickerEndingPrices(tickerIndex) = Cells(i, 6).Value
+                    
+                    End If
+                End If
+                
+            Next i
+            
+            
+           Next tickerIndex
+           
+           
+           'Update the total volume and percentage of price for each ticker
+            Worksheets("All Stocks Analysis").Activate
+           
+           For tickerIndex = 0 To 11
+           
+           
+            'Access the arrays to show the results
+            
+            Cells(tickerIndex + 4, 1).Value = tickers(tickerIndex)
+            
+            Cells(tickerIndex + 4, 2).Value = 2018
+            
+            Cells(tickerIndex + 4, 3).Value = tickerVolumes(tickerIndex)
+        
+            'Percentage increase or decrease in price from the beginning of the year to the end of the year
+        
+            Cells(tickerIndex + 4, 4).Value = (tickerEndingPrices(tickerIndex) / tickerStartingPrices(tickerIndex)) - 1
+            
+               
+                           
+            Next tickerIndex
+           
+             
+           'Format the percentage of price
+           Call AllStockAnalysisFormatting
+          
+           
+           
+           endTime = Timer
+           MsgBox "This code ran in " & (endTime - startTime) & " seconds for the year " & Str(yearValue)
+           
+    Else
+   
+         MsgBox ("Invalid Year!!")
+  
+   
+    End If
+     
+End Sub
+
+Sub AllStockAnalysisFormatting()
+
+    'Formatting
+    
+    'Activate the worksheet for formatting the returns
+    Worksheets("All Stocks Analysis").Activate
+    
+    Range("A3:D3").Font.FontStyle = "Bold"
+    Range("A3:D3").Borders(xlEdgeBottom).LineStyle = xlContinuous
+    Range("B3:B15").NumberFormat = "####"
+    Range("C4:C15").NumberFormat = "$#,##0.00"
+    Range("D4:D15").NumberFormat = "0.00%"
+    
+    Columns("C").AutoFit
+    Columns("D").AutoFit
+    
+    
+    'access the rows
+    
+    dataRowStart = 4
+    dataRowEnd = 15
+    
+    'loop through the rows and fill the color of the cell
+    For i = dataRowStart To dataRowEnd
+
+        If Cells(i, 4) > 0 Then
+
+            'Color the cell green if the data value is above Zero.
+            Cells(i, 4).Interior.Color = vbGreen
+
+        ElseIf Cells(i, 4) < 0 Then
+
+            'Color the cell red if the data value is below zero.
+            Cells(i, 4).Interior.Color = vbRed
+
+        Else
+
+            'otherwise set to default cell color.
+            Cells(i, 4).Interior.Color = xlNone
+
+        End If
+
+    Next i
+    
+    
+End Sub
+Sub ClearWorksheet()
+
+    Cells.Clear
+
+End Sub
+
+
+
+
+
+
+
