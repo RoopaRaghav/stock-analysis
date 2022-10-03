@@ -40,7 +40,7 @@ The code has interactive buttons to run the analysis considering the year as inp
 ![VBA_Challenge_2018](https://user-images.githubusercontent.com/111100908/186755702-64d31833-e1c3-438f-bcfc-e910c06cfb00.png)
 
 
-## Reafctored Script :The code that has been refactored to accomodate all the tickers is shown below:
+## Refactored Script :The code that has been refactored to accomodate all the tickers is shown below:
 ![VBA_Challenge_Refactor code](https://user-images.githubusercontent.com/111100908/186974193-179048c6-d50d-454d-b819-87a44c52424c.png)
 
 
